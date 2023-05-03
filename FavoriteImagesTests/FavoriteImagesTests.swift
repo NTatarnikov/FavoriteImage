@@ -9,29 +9,42 @@
 import XCTest
 @testable import FavoriteImages
 
-final class FavoriteImagesTests: XCTestCase {
+class FavoritesServiceTests: XCTestCase {
+    var favoritesService: FavoritesService!
 
-    override func setUpWithError() throws {
-        // Put setup code here. This method is called before the invocation of each test method in the class.
+    override func setUp() {
+        super.setUp()
+        favoritesService = FavoritesService()
     }
 
-    override func tearDownWithError() throws {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
+    override func tearDown() {
+        favoritesService = nil
+        super.tearDown()
     }
 
-    func testExample() throws {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
-        // Any test you write for XCTest can be annotated as throws and async.
-        // Mark your test throws to produce an unexpected failure when your test encounters an uncaught error.
-        // Mark your test async to allow awaiting for asynchronous code to complete. Check the results with assertions afterwards.
+    func testAdd() {
+        let imageModel = ImageModel(request: "test", image: UIImage())
+        favoritesService.add(imageModel)
+        XCTAssertEqual(favoritesService.getAll().count, 1)
     }
 
-    func testPerformanceExample() throws {
-        // This is an example of a performance test case.
-        self.measure {
-            // Put the code you want to measure the time of here.
-        }
+    func testRemove() {
+        let imageModel = ImageModel(request: "test", image: UIImage())
+        favoritesService.add(imageModel)
+        XCTAssertEqual(favoritesService.getAll().count, 1)
+        favoritesService.remove(at: 0)
+        XCTAssertEqual(favoritesService.getAll().count, 0)
     }
 
+    func testGetAll() {
+        let imageModel1 = ImageModel(request: "test1", image: UIImage())
+        let imageModel2 = ImageModel(request: "test2", image: UIImage())
+        favoritesService.add(imageModel1)
+        favoritesService.add(imageModel2)
+        let allFavorites = favoritesService.getAll()
+        XCTAssertEqual(allFavorites.count, 2)
+        XCTAssertEqual(allFavorites[0].request, "test1")
+        XCTAssertEqual(allFavorites[1].request, "test2")
+    }
 }
+
